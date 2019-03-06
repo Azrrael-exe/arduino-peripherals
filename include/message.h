@@ -10,6 +10,7 @@ class Message {
         uint16_t getData(uint8_t);
         uint8_t getData(uint8_t, uint8_t);
         uint8_t dataLength();
+        bool isEmpty();
     private:
         uint8_t buffer[20];
         uint8_t cursor;
@@ -64,4 +65,9 @@ uint8_t Message::getData(uint8_t key, uint8_t index){
             return buffer[i + 1 + index];
         }
     }
+}
+
+bool Message::isEmpty(){
+    bool empty = (cursor == 0);
+    return !empty;
 }
