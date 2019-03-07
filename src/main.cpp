@@ -11,6 +11,7 @@
 
 Com uart = Com(0x7E);
 Universal screen = Universal();
+Universal joystick = Universal();
 
 void setup() {
   pinMode(2, INPUT);
@@ -20,6 +21,8 @@ void setup() {
   screen.attach(0, showStatus);
   screen.attach(1, showInput);
   screen.attach(2, sending);
+
+  joystick.attach(0, readJoystick);
 }
 
 void loop() {
@@ -35,5 +38,7 @@ void loop() {
     screen.run(2, dummy);
     uart.send(Serial, dummy);
   }
+  Message read = joystick.run(0, Message());
+  screen.run(0, read);
 }
 
