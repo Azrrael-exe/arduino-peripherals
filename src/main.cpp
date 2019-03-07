@@ -10,21 +10,29 @@
 #include "functions.h"
 
 Com uart = Com(0x7E);
+Universal screen = Universal();
 
 void setup() {
-  pinMode(3, INPUT);
+  pinMode(2, INPUT);
   Serial.begin(115200);
+  functionsConfig();
+
+  screen.attach(0, showStatus);
+  screen.attach(1, showInput);
+  screen.attach(2, sending);
 }
 
 void loop() {
   if(uart.available(Serial)){
     Message input = uart.readQueue();
+    screen.run(1, input);
     uart.send(Serial, input);
   }
-  if(digitalRead(3)){
-    while(digitalRead(3)){}
+  if(digitalRead(2)){
+    while(digitalRead(2)){}
     Message dummy = Message();
     dummy.addData(0x10, 0x0A64);
+    screen.run(2, dummy);
     uart.send(Serial, dummy);
   }
 }
