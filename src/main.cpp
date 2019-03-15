@@ -1,3 +1,5 @@
+/* arduino-peripheal 1.0.0 */
+
 #include <Arduino.h>
 
 #include <peripheal.h>
