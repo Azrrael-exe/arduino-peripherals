@@ -5,24 +5,27 @@
 #include <message.h>
 #include <universal.h>
 
+#include <com.h>
+
 #include "functions.h"
 
-Universal principal = Universal();
-Universal secundario = Universal();
+Com uart = Com(0x7E);
 
 void setup() {
+  pinMode(3, INPUT);
   Serial.begin(115200);
 }
 
 void loop() {
-  principal.attach(0, dummyRead);
-  secundario.attach(0, dummyWrite);
-
-  principal.run(0, secundario.readResult(0, Message(), true));
-
-  while(1){
-    /* code */
+  if(uart.available(Serial)){
+    Message input = uart.readQueue();
+    uart.send(Serial, input);
   }
-  
+  if(digitalRead(3)){
+    while(digitalRead(3)){}
+    Message dummy = Message();
+    dummy.addData(0x10, 0x0A64);
+    uart.send(Serial, dummy);
+  }
 }
 

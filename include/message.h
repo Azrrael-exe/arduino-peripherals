@@ -11,6 +11,7 @@ class Message {
         uint8_t getData(uint8_t, uint8_t);
         uint8_t dataLength();
         bool isEmpty();
+        void serialize(uint8_t (&inp)[20]);
     private:
         uint8_t buffer[20];
         uint8_t cursor;
@@ -70,4 +71,14 @@ uint8_t Message::getData(uint8_t key, uint8_t index){
 bool Message::isEmpty(){
     bool empty = (cursor == 0);
     return !empty;
+}
+
+uint8_t Message::dataLength(){
+    return cursor;
+}
+
+void Message::serialize(uint8_t (&inp)[20]){
+    for(int i = 0; i < cursor; i++){
+        inp[i] = buffer[i];
+    }
 }
