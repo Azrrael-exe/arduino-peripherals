@@ -1,6 +1,12 @@
 #ifndef function_h
 #define function_h
 
+#define ANALOG_X A0
+#define ANALOG_Y A1
+
+#define CMD_STATUS  0xA0
+#define DATA_JOY    0xD0
+
 #include <Arduino.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -16,6 +22,25 @@ LiquidCrystal_I2C lcd(0x27, LCD_MAX_CHARACTERS, LCD_LINES);
 void functionsConfig(){
   lcd.init();
   lcd.backlight();
+}
+
+Message readJoystick(Message input=Message()){
+  uint8_t samples = 5;
+  Message out;
+  long x = 0;
+  long y = 0;
+
+  for(int i=0; i<samples; i++){
+    x += analogRead(ANALOG_X);
+    y += analogRead(ANALOG_Y);
+    delay(1);
+  }
+
+  x = map(x/samples, 0, 1023, 0, 255);
+  y = map(y/samples, 0, 1023, 0, 255);
+
+  out.addData(DATA_JOY, x, y);
+  return out;
 }
 
 Message showStatus(Message input){
@@ -48,6 +73,7 @@ Message showStatus(Message input){
   }
   return Message();
 }
+
 Message showInput(Message input){
   char buffer[LCD_MAX_CHARACTERS];
   sprintf(buffer, "New Message! %u", input.dataLength());
@@ -56,6 +82,7 @@ Message showInput(Message input){
   lcd.print(buffer);
   return Message();
 }
+
 Message sending(Message input){
   char buffer[LCD_MAX_CHARACTERS];
   sprintf(buffer, "Sending! %u", input.dataLength());
